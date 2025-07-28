@@ -1,7 +1,7 @@
 <% layout("/layouts/boilerplate.ejs") -%>
 <div class="row mt-3">
   <div class="col-8 offset-2">
-    <h3>Listing details:</h3>
+    <h3><%= listing.title %></h3>
     <div class="col-6 offset-2">
       <img
         src="<%= listing.image %>"
@@ -11,7 +11,6 @@
     </div>
     <div class="card mb-3">
       <div class="card-body">
-        <h3 class="card-title mb-3"><%= listing.title %></h3>
         <p class="card-text"><%= listing.description %></p>
         <ul class="list-group list-group-flush mb-3">
           <li class="list-group-item">
@@ -37,5 +36,40 @@
         </form>
       </div>
     </div>
+  </div>
+  <div class="col-8 offset-2 mb-3">
+    <hr />
+    <h4>Leave a review</h4>
+    <form
+      action="/listings/<%= listing._id %>/reviews"
+      method="POST"
+      novalidate
+      class="needs-validation"
+    >
+      <div class="mb-3 mt-3">
+        <label for="rating" class="form-label">Rating</label>
+        <input
+          type="range"
+          name="review[rating]"
+          id="rating"
+          min="1"
+          max="5"
+          class="form-range"
+          required
+        />
+      </div>
+      <div class="mb-3 mt-3">
+        <label for="comment" class="form-label">Comment</label>
+        <textarea
+          name="review[comment]"
+          id="comment"
+          class="form-control"
+          rows="5"
+          cols="30"
+          required
+        ></textarea>
+      </div>
+      <button class="btn btn-outline-dark">Submit</button>
+    </form>
   </div>
 </div>

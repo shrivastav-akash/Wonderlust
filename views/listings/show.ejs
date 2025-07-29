@@ -9,7 +9,7 @@
         alt="<%= listing.title %>"
       />
     </div>
-    <div class="card mb-3">
+    <div class="card mb-3 listing-card">
       <div class="card-body">
         <p class="card-text"><%= listing.description %></p>
         <ul class="list-group list-group-flush mb-3">
@@ -71,5 +71,25 @@
       </div>
       <button class="btn btn-outline-dark">Submit</button>
     </form>
+    <hr />
+    <div class="row">
+      <p><b>All Reviews</b></p>
+      <% for (let review of listing.reviews) { %>
+      <div class="card col-5 ms-3 mb-3">
+        <div class="card-body">
+          <h5 class="card-title">User</h5>
+          <p class="card-text"><%= review.comment %></p>
+          <p class="card-text"><%= review.rating %> Stars</p>
+        </div>
+        <form
+          action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+          method="POST"
+          class="d-inline mb-3"
+        >
+          <button class="btn btn-sm btn-dark">Delete</button>
+        </form>
+      </div>
+      <% } %>
+    </div>
   </div>
 </div>

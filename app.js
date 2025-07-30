@@ -6,9 +6,16 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
 
 const listingRoutes = require("./routes/listing");
 const reviewRoutes = require("./routes/review");
+const userRoutes = require("./routes/user");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wonderlust";
 
@@ -38,8 +45,39 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cookieParser());
+app.use(
+  session({
+    secret: "wubalubadubdub",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      expires: Date.now() + 1000 * 60 * 60 * 24 * 30,
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    },
+  })
+);
+
+app.use(flash());
+
+app.use(passport.initialize()); // a middleware to initialize passport
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
+
 app.use("/listings", listingRoutes);
 app.use("/listings/:id/reviews", reviewRoutes);
+app.use("/", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hi, I am root");

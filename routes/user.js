@@ -39,8 +39,18 @@ router.post(
   }),
   (req, res) => {
     req.flash("success", "Welcome back!");
-    res.redirect("/listings");
+    const redirectUrl = req.session.returnTo || "/listings";
+    delete req.session.returnTo;
+    res.redirect(redirectUrl);
   }
 );
+
+router.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) return next(err);
+  });
+  req.flash("success", "Logged out successfully");
+  res.redirect("/listings");
+});
 
 module.exports = router;
